@@ -8,7 +8,6 @@
 # All rights reserved.
 #
 import asyncio
-from asyncio import sleep
 import time
 
 from pyrogram import filters
@@ -50,15 +49,10 @@ loop = asyncio.get_running_loop()
 async def start_comm(client, message: Message, _):
     chat_id = message.chat.id
     await add_served_user(message.from_user.id)
-
-    # Send the initial "Loading..." message
-    loading_msg = await message.reply_text("Loading...")
-
-    # Wait for 1 second before editing the message
+    loading_msg = await message.reply_text("Starting...")
+    configuring_msg = await loading_msg.edit_text("Loading panel 🎵")
     await sleep(1)
-    await loading_msg.edit_text("Configuring...")
-
-    # Check if additional parameters are present in the command
+    await configuring_msg.delete()
     if len(message.text.split()) > 1:
         name = message.text.split(None, 1)[1]
         if name[0:4] == "help":
