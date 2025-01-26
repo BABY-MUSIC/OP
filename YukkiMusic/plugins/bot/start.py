@@ -51,11 +51,14 @@ async def start_comm(client, message: Message, _):
     chat_id = message.chat.id
     await add_served_user(message.from_user.id)
 
+    # Send the initial "Loading..." message
     loading_msg = await message.reply_text("Loading...")
-    
+
+    # Wait for 1 second before editing the message
     await sleep(1)
     await loading_msg.edit_text("Configuring...")
 
+    # Check if additional parameters are present in the command
     if len(message.text.split()) > 1:
         name = message.text.split(None, 1)[1]
         if name[0:4] == "help":
@@ -63,36 +66,32 @@ async def start_comm(client, message: Message, _):
 
             if config.START_IMG_URL:
                 return await message.reply_photo(
-                    photo=START_IMG_URL,
+                    photo=config.START_IMG_URL,
                     caption=_["help_1"],
                     reply_markup=keyboard,
                 )
-            else:
-                return await loading_msg.edit_text(
-                    text=_["help_1"],
-                    reply_markup=keyboard,
-                )
-            else:
-                return await message.reply_text(
-                    text=_["help_1"],
-                    reply_markup=keyboard,
-                )
-        if name[0:4] == "song":
+            return await loading_msg.edit_text(
+                text=_["help_1"],
+                reply_markup=keyboard,
+            )
+        elif name[0:4] == "song":
             await message.reply_text(_["song_2"])
             return
-        if name == "mkdwn_help":
+        elif name == "mkdwn_help":
             await message.reply(
                 MARKDOWN,
                 parse_mode=ParseMode.HTML,
                 disable_web_page_preview=True,
             )
-        if name == "greetings":
+            return
+        elif name == "greetings":
             await message.reply(
                 WELCOMEHELP,
                 parse_mode=ParseMode.HTML,
                 disable_web_page_preview=True,
             )
-        if name[0:3] == "sta":
+            return
+        elif name[0:3] == "sta":
             m = await message.reply_text("🔎 Fetching Your personal stats.!")
             stats = await get_userss(message.from_user.id)
             tot = len(stats)
@@ -143,7 +142,7 @@ async def start_comm(client, message: Message, _):
             await m.delete()
             await message.reply_photo(photo=thumbnail, caption=msg)
             return
-        if name[0:3] == "sud":
+        elif name[0:3] == "sud":
             await sudoers_list(client=client, message=message, _=_)
             await asyncio.sleep(1)
             if await is_on_off(config.LOG):
@@ -155,7 +154,7 @@ async def start_comm(client, message: Message, _):
                     f"{message.from_user.mention} Has just started bot to check <code>Sudolist </code>\n\n**User Id:** {sender_id}\n**User Name:** {sender_name}",
                 )
             return
-        if name[0:3] == "lyr":
+        elif name[0:3] == "lyr":
             query = (str(name)).replace("lyrics_", "", 1)
             lyrical = config.lyrical
             lyrics = lyrical.get(query)
@@ -165,10 +164,10 @@ async def start_comm(client, message: Message, _):
             else:
                 await message.reply_text("Failed to get lyrics ")
                 return
-        if name[0:3] == "del":
+        elif name[0:3] == "del":
             await del_plist_msg(client=client, message=message, _=_)
             await asyncio.sleep(1)
-        if name[0:3] == "inf":
+        elif name[0:3] == "inf":
             m = await message.reply_text("🔎 Fetching info..")
             query = (str(name)).replace("info_", "", 1)
             query = f"https://www.youtube.com/watch?v={query}"
@@ -192,7 +191,7 @@ async def start_comm(client, message: Message, _):
 ⏰**Published times:** {published}
 🎥**Channel Name:** {channel}
 📎**Channel Link:** [Visit from here]({channellink})
-🔗**Videp linl:** [Link]({link})
+🔗**Video link:** [Link]({link})
 """
             key = InlineKeyboardMarkup(
                 [
@@ -216,7 +215,7 @@ async def start_comm(client, message: Message, _):
                 sender_name = message.from_user.first_name
                 return await app.send_message(
                     config.LOG_GROUP_ID,
-                    f"{message.from_user.mention} Has just started bot ot check <code> Video information  </code>\n\n**User Id:** {sender_id}\n**User Name** {sender_name}",
+                    f"{message.from_user.mention} Has just started bot to check <code> Video information </code>\n\n**User Id:** {sender_id}\n**User Name:** {sender_name}",
                 )
     else:
         try:
@@ -249,6 +248,7 @@ async def start_comm(client, message: Message, _):
                 config.LOG_GROUP_ID,
                 f"{message.from_user.mention} Has started bot. \n\n**User id :** {sender_id}\n**User name:** {sender_name}",
             )
+
 
 
 @app.on_message(command("START_COMMAND") & filters.group & ~BANNED_USERS)
