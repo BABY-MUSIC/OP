@@ -8,6 +8,7 @@
 # All rights reserved.
 #
 import asyncio
+from asyncio import sleep
 import time
 
 from pyrogram import filters
@@ -43,11 +44,18 @@ from YukkiMusic.plugins.bot.help import paginate_modules
 loop = asyncio.get_running_loop()
 
 
+
 @app.on_message(command("START_COMMAND") & filters.private & ~BANNED_USERS)
 @LanguageStart
 async def start_comm(client, message: Message, _):
     chat_id = message.chat.id
     await add_served_user(message.from_user.id)
+
+    loading_msg = await message.reply_text("Loading...")
+    
+    await sleep(1)
+    await loading_msg.edit_text("Configuring...")
+
     if len(message.text.split()) > 1:
         name = message.text.split(None, 1)[1]
         if name[0:4] == "help":
@@ -57,6 +65,11 @@ async def start_comm(client, message: Message, _):
                 return await message.reply_photo(
                     photo=START_IMG_URL,
                     caption=_["help_1"],
+                    reply_markup=keyboard,
+                )
+            else:
+                return await loading_msg.edit_text(
+                    text=_["help_1"],
                     reply_markup=keyboard,
                 )
             else:
