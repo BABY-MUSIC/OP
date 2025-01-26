@@ -110,16 +110,16 @@ class YukkiBot(Client):
         self.name = f"{get_me.first_name} {get_me.last_name or ''}"
         self.mention = get_me.mention
 
-    #    try:
-    #        await self.send_message(
-                #config.OWNER_ID,
-    #            text=(
-               #     f"<u><b>{self.mention} Bot Started :</b></u>\n\n"
-       #             f"Id : <code>{self.id}</code>\n"
-          #          f"Name : {self.name}\n"
-       #             f"Username : @{self.username}"
-        #        ),
-    #        )
+        try:
+            await self.send_message(
+                config.LOG_GROUP_ID,
+                text=(
+                    f"<u><b>{self.mention} Bot Started :</b></u>\n\n"
+                    f"Id : <code>{self.id}</code>\n"
+                    f"Name : {self.name}\n"
+                    f"Username : @{self.username}"
+                ),
+            )
         except (errors.ChannelInvalid, errors.PeerIdInvalid):
             LOGGER(__name__).error(
                 "Bot failed to access the log group. Ensure the bot is added and promoted as admin."
