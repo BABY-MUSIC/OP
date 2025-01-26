@@ -112,7 +112,7 @@ class YukkiBot(Client):
 
         try:
             await self.send_message(
-                config.LOG_GROUP_ID,
+                config.OWNER_ID,
                 text=(
                     f"<u><b>{self.mention} Bot Started :</b></u>\n\n"
                     f"Id : <code>{self.id}</code>\n"
